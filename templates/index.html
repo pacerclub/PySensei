@@ -7,6 +7,7 @@
     <style>
         body {
             font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
             margin: 0;
             padding: 0;
             display: flex;
@@ -14,60 +15,103 @@
             align-items: center;
             justify-content: center;
             height: 100vh;
-            background-color: #f5f5f5;
         }
-        .container {
-            max-width: 600px;
+        .chat-container {
             width: 100%;
-            padding: 20px;
+            max-width: 800px;
             background-color: #fff;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             border-radius: 8px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
         }
-        h1 {
-            margin-bottom: 20px;
+        .chat-header {
+            background-color: #007bff;
+            color: #fff;
+            padding: 10px;
             text-align: center;
         }
-        textarea {
-            width: 100%;
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        .chat-message {
+            margin-bottom: 20px;
+        }
+        .chat-message.user .message-content {
+            background-color: #007bff;
+            color: #fff;
+            align-self: flex-end;
+            text-align: right;
+        }
+        .chat-message.bot .message-content {
+            background-color: #e9ecef;
+            color: #333;
+            align-self: flex-start;
+            text-align: left;
+        }
+        .message-content {
             padding: 10px;
-            margin-bottom: 10px;
+            border-radius: 4px;
+            max-width: 70%;
+            word-wrap: break-word;
+        }
+        .chat-input {
+            display: flex;
+            padding: 10px;
+            border-top: 1px solid #ccc;
+        }
+        .chat-input textarea {
+            flex: 1;
+            padding: 10px;
             border: 1px solid #ccc;
             border-radius: 4px;
-            resize: vertical;
+            resize: none;
         }
-        button {
-            width: 100%;
-            padding: 10px;
+        .chat-input button {
+            margin-left: 10px;
+            padding: 10px 20px;
             background-color: #007bff;
             color: #fff;
             border: none;
             border-radius: 4px;
             cursor: pointer;
         }
-        button:hover {
+        .chat-input button:hover {
             background-color: #0056b3;
-        }
-        .response {
-            margin-top: 20px;
-            padding: 10px;
-            background-color: #e9ecef;
-            border-radius: 4px;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>CodeMotor: Python Learning Assistant</h1>
-        <textarea id="question" rows="4" placeholder="Ask a question about Python..."></textarea>
-        <button onclick="askQuestion()">Ask</button>
-        <div id="response" class="response"></div>
+    <div class="chat-container">
+        <div class="chat-header">
+            <h1>CodeMotor: Python Learning Assistant</h1>
+        </div>
+        <div class="chat-messages" id="chat-messages">
+            {% for message in messages %}
+            <div class="chat-message {{ message.role }}">
+                <div class="message-content">{{ message.content|safe }}</div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="chat-input">
+            <textarea id="question" rows="1" placeholder="Ask a question about Python..."></textarea>
+            <button onclick="askQuestion()">Ask</button>
+        </div>
     </div>
     <script>
         async function askQuestion() {
             const question = document.getElementById('question').value;
-            const responseDiv = document.getElementById('response');
-            responseDiv.textContent = 'Thinking...';
+            const chatMessages = document.getElementById('chat-messages');
+            const userMessageDiv = document.createElement('div');
+            userMessageDiv.classList.add('chat-message', 'user');
+            userMessageDiv.innerHTML = `<div class="message-content">${question}</div>`;
+            chatMessages.appendChild(userMessageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            document.getElementById('question').value = '';
 
             const response = await fetch('/ask', {
                 method: 'POST',
@@ -78,10 +122,24 @@
             });
 
             const data = await response.json();
+            const botMessageDiv = document.createElement('div');
+            botMessageDiv.classList.add('chat-message', 'bot');
             if (data.error) {
-                responseDiv.textContent = data.error;
+                botMessageDiv.innerHTML = `<div class="message-content">${data.error}</div>`;
             } else {
-                responseDiv.textContent = data.response;
+                botMessageDiv.innerHTML = `<div class="message-content">${data.response}</div>`;
+            }
+            chatMessages.appendChild(botMessageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        async function startNewConversation() {
+            const response = await fetch('/new_conversation', {
+                method: 'POST'
+            });
+
+            if (response.ok) {
+                document.getElementById('chat-messages').innerHTML = '';
             }
         }
     </script>
