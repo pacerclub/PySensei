@@ -151,6 +151,7 @@
             max-width: 100%;
             font-size: 1em;
             line-height: 1.5;
+            position: relative;
         }
         .chat-message.user .message-content {
             background-color: var(--primary-color);
@@ -236,6 +237,11 @@
             border: none;
             cursor: pointer;
             margin-left: 10px;
+            font-size: 1em;
+            color: var(--primary-color);
+        }
+        .copy-button:hover {
+            color: #0056b3;
         }
         pre {
             background: #f4f4f4;
@@ -292,7 +298,16 @@
             {% if chat_id %}
             {% for message in messages %}
             <div class="chat-message {{ message.role }}">
-                <div class="message-content">{{ message.content|safe }}</div>
+                <div class="message-content">
+                    {{ message.content|safe }}
+                    {% if message.role == 'bot' and message.code %}
+                    <div class="code-header">
+                        <span class="language-label">{{ message.language }}</span>
+                        <button class="copy-button" onclick="copyToClipboard(this)">Copy</button>
+                    </div>
+                    <pre><code class="language-{{ message.language }}">{{ message.code|safe }}</code></pre>
+                    {% endif %}
+                </div>
             </div>
             {% endfor %}
             {% else %}
@@ -353,6 +368,11 @@
             botMessageDiv.innerHTML = `<div class="message-content">${data.error ? data.error : data.response}</div>`;
             Prism.highlightAll();
             chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            // AI asks a follow-up question
+            setTimeout(() => {
+                askFollowUpQuestion();
+            }, 5000);
         }
 
         function handleKeyPress(event) {
@@ -404,6 +424,38 @@
                 icon.classList.replace('fa-moon', 'fa-sun');
                 document.getElementById('prism-theme').href = "https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/themes/prism.min.css";
             }
+        }
+
+        function copyToClipboard(button) {
+            const codeBlock = button.parentElement.nextElementSibling.querySelector('code');
+            const textArea = document.createElement('textarea');
+            textArea.value = codeBlock.textContent;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+            button.textContent = 'Copied!';
+            setTimeout(() => {
+                button.textContent = 'Copy';
+            }, 2000);
+        }
+
+        function askFollowUpQuestion() {
+            const followUpQuestions = [
+                "Here's a Python code snippet with a bug. Can you fix it?\n```python\nprint('Hello World)\n```",
+                "Here's a piece of Python code. Can you explain what it does?\n```python\ndef greet(name):\n    return f'Hello, {name}'\n```",
+                "What does this Python error mean?\n```python\nTypeError: unsupported operand type(s) for +: 'int' and 'str'\n```",
+                "Can you write a Python function that reverses a string?"
+            ];
+
+            const randomQuestion = followUpQuestions[Math.floor(Math.random() * followUpQuestions.length)];
+
+            const botMessageDiv = document.createElement('div');
+            botMessageDiv.classList.add('chat-message', 'bot');
+            botMessageDiv.innerHTML = `<div class="message-content">${randomQuestion}</div>`;
+            document.getElementById('chat-messages').appendChild(botMessageDiv);
+            Prism.highlightAll();
+            document.getElementById('chat-messages').scrollTop = document.getElementById('chat-messages').scrollHeight;
         }
     </script>
 </body>
