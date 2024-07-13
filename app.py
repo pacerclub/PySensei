@@ -1,7 +1,8 @@
 import openai
 import os
 from dotenv import load_dotenv
-from flask import Flask, request, jsonify, render_template, session, redirect, url_for
+from flask import Flask, request, jsonify, session, redirect, url_for
+from flask_cors import CORS
 from flask_session import Session
 import markdown
 from bs4 import BeautifulSoup
@@ -18,6 +19,7 @@ api_key = os.getenv('OPENAI_API_KEY')
 client = openai.OpenAI(api_key=api_key)
 
 app = Flask(__name__)
+CORS(app, resources={r"/*": {"origins": "https://pysensei.cn"}})  # Enable CORS for the specified origin
 app.config['SECRET_KEY'] = 'your_secret_key'
 app.config['SESSION_TYPE'] = 'filesystem'
 Session(app)
@@ -60,7 +62,11 @@ def home():
 def chat(chat_id):
     if 'conversations' not in session or chat_id not in session['conversations']:
         return redirect(url_for('home'))
-    return render_template('index.html', chat_id=chat_id, messages=session['conversations'][chat_id]['messages'], conversations=session['conversations'])
+    return jsonify({
+        'chat_id': chat_id,
+        'messages': session['conversations'][chat_id]['messages'],
+        'conversations': session['conversations']
+    })
 
 @app.route('/new_chat', methods=['POST', 'GET'])
 def new_chat():
