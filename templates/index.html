@@ -83,6 +83,7 @@
         .chat-message.user {
             justify-content: flex-end;
             align-self: flex-end;
+            margin-left: auto;
         }
         .chat-message.bot {
             justify-content: flex-start;
@@ -189,6 +190,12 @@
 
             document.getElementById('question').value = '';
 
+            const botMessageDiv = document.createElement('div');
+            botMessageDiv.classList.add('chat-message', 'bot');
+            botMessageDiv.innerHTML = `<div class="message-content">Generating message...</div>`;
+            chatMessages.appendChild(botMessageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
             const response = await fetch(`/ask/{{ chat_id }}`, {
                 method: 'POST',
                 headers: {
@@ -198,14 +205,7 @@
             });
 
             const data = await response.json();
-            const botMessageDiv = document.createElement('div');
-            botMessageDiv.classList.add('chat-message', 'bot');
-            if (data.error) {
-                botMessageDiv.innerHTML = `<div class="message-content">${data.error}</div>`;
-            } else {
-                botMessageDiv.innerHTML = `<div class="message-content">${data.response}</div>`;
-            }
-            chatMessages.appendChild(botMessageDiv);
+            botMessageDiv.innerHTML = `<div class="message-content">${data.error ? data.error : data.response}</div>`;
             chatMessages.scrollTop = chatMessages.scrollHeight;
         }
 
