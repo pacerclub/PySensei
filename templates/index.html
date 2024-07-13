@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CodeMotor: Python Learning Assistant</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/themes/prism.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/themes/prism-tomorrow.min.css" id="prism-theme">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=SF+Pro+Text:wght@400;600&display=swap');
 
@@ -248,43 +251,20 @@
             padding: 2px 5px;
             border-radius: 3px;
         }
+        .dark-mode pre {
+            background: #2d2d2d;
+            color: #f8f8f2;
+        }
         /* Toggle Switch */
         .toggle-switch {
             display: flex;
             align-items: center;
             cursor: pointer;
         }
-        .toggle-switch input {
-            display: none;
-        }
-        .toggle-switch .switch {
-            position: relative;
-            width: 40px;
-            height: 20px;
-            background-color: #ccc;
-            border-radius: 12px;
-            transition: background-color 0.3s;
-        }
-        .toggle-switch .switch::before {
-            content: '';
-            position: absolute;
-            width: 16px;
-            height: 16px;
-            background-color: #fff;
-            border-radius: 50%;
-            top: 2px;
-            left: 2px;
-            transition: transform 0.3s;
-        }
-        .toggle-switch input:checked + .switch {
-            background-color: var(--primary-color);
-        }
-        .toggle-switch input:checked + .switch::before {
-            transform: translateX(20px);
-        }
         .toggle-switch .icon {
             font-size: 1.5em;
             margin-left: 10px;
+            transition: color 0.3s;
         }
     </style>
 </head>
@@ -305,9 +285,7 @@
         <div class="chat-header">
             <span>CodeMotor: Python Learning Assistant</span>
             <div class="toggle-switch" onclick="toggleMode()">
-                <input type="checkbox" id="mode-switch">
-                <span class="switch"></span>
-                <span class="icon" id="mode-icon">🌞</span>
+                <i class="fas fa-sun icon" id="mode-icon"></i>
             </div>
         </div>
         <div class="chat-messages" id="chat-messages">
@@ -328,6 +306,8 @@
         </div>
         {% endif %}
     </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/components/prism-python.min.js"></script>
     <script>
         async function startNewConversation() {
             const response = await fetch('/new_chat', {
@@ -371,6 +351,7 @@
 
             const data = await response.json();
             botMessageDiv.innerHTML = `<div class="message-content">${data.error ? data.error : data.response}</div>`;
+            Prism.highlightAll();
             chatMessages.scrollTop = chatMessages.scrollHeight;
         }
 
@@ -396,7 +377,10 @@
             if (mode === 'dark') {
                 document.body.classList.add('dark-mode');
                 document.getElementById('mode-switch').checked = true;
-                document.getElementById('mode-icon').innerText = '🌜';
+                document.getElementById('mode-icon').classList.replace('fa-sun', 'fa-moon');
+                document.getElementById('prism-theme').href = "https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/themes/prism-tomorrow.min.css";
+            } else {
+                document.getElementById('prism-theme').href = "https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/themes/prism.min.css";
             }
         };
 
@@ -412,7 +396,14 @@
         function toggleMode() {
             const isDarkMode = document.body.classList.toggle('dark-mode');
             localStorage.setItem('mode', isDarkMode ? 'dark' : 'light');
-            document.getElementById('mode-icon').innerText = isDarkMode ? '🌜' : '🌞';
+            const icon = document.getElementById('mode-icon');
+            if (isDarkMode) {
+                icon.classList.replace('fa-sun', 'fa-moon');
+                document.getElementById('prism-theme').href = "https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/themes/prism-tomorrow.min.css";
+            } else {
+                icon.classList.replace('fa-moon', 'fa-sun');
+                document.getElementById('prism-theme').href = "https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/themes/prism.min.css";
+            }
         }
     </script>
 </body>
