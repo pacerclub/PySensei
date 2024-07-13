@@ -7,21 +7,43 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=SF+Pro+Text:wght@400;600&display=swap');
 
+        :root {
+            --bg-color-light: #f5f5f5;
+            --bg-color-dark: #1e1e1e;
+            --text-color-light: #333;
+            --text-color-dark: #ddd;
+            --primary-color: #007bff;
+            --secondary-color: #f0f0f0;
+            --border-color-light: #ddd;
+            --border-color-dark: #444;
+        }
+
         body {
             font-family: 'SF Pro Text', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background-color: #f5f5f5;
+            background-color: var(--bg-color-light);
+            color: var(--text-color-light);
             margin: 0;
             padding: 0;
             display: flex;
             height: 100vh;
             overflow: hidden;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .dark-mode {
+            background-color: var(--bg-color-dark);
+            color: var(--text-color-dark);
         }
         .sidebar {
             width: 300px;
             background-color: #fff;
-            border-right: 1px solid #ddd;
+            border-right: 1px solid var(--border-color-light);
             padding: 20px;
             overflow-y: auto;
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+        .dark-mode .sidebar {
+            background-color: var(--bg-color-dark);
+            border-color: var(--border-color-dark);
         }
         .sidebar h2 {
             margin-top: 0;
@@ -32,7 +54,7 @@
         }
         .conversation-list li {
             background-color: #fff;
-            border: 1px solid #ddd;
+            border: 1px solid var(--border-color-light);
             border-radius: 8px;
             margin-bottom: 10px;
             padding: 15px;
@@ -40,12 +62,20 @@
             justify-content: space-between;
             align-items: center;
             cursor: pointer;
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+        .dark-mode .conversation-list li {
+            background-color: var(--bg-color-dark);
+            border-color: var(--border-color-dark);
         }
         .conversation-list li:hover {
-            background-color: #f0f0f0;
+            background-color: var(--secondary-color);
+        }
+        .dark-mode .conversation-list li:hover {
+            background-color: #333;
         }
         .conversation-list li.active {
-            background-color: #007bff;
+            background-color: var(--primary-color);
             color: #fff;
         }
         .delete-button {
@@ -61,7 +91,7 @@
             display: block;
             width: 40px;
             height: 40px;
-            background-color: #007bff;
+            background-color: var(--primary-color);
             color: #fff;
             border: none;
             border-radius: 50%;
@@ -70,6 +100,7 @@
             font-size: 1.5em;
             line-height: 40px;
             margin: 0 auto;
+            transition: background-color 0.3s;
         }
         .new-chat-button-icon:hover {
             background-color: #0056b3;
@@ -81,12 +112,15 @@
             width: 100%;
         }
         .chat-header {
-            background-color: #007bff;
+            background-color: var(--primary-color);
             color: #fff;
             padding: 20px;
             text-align: center;
             font-weight: 600;
             font-size: 1.5em;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
         .chat-messages {
             flex: 1;
@@ -116,37 +150,52 @@
             line-height: 1.5;
         }
         .chat-message.user .message-content {
-            background-color: #007bff;
+            background-color: var(--primary-color);
             color: #fff;
         }
         .chat-message.bot .message-content {
-            background-color: #e9ecef;
-            color: #333;
+            background-color: var(--secondary-color);
+            color: var(--text-color-light);
+        }
+        .dark-mode .chat-message.bot .message-content {
+            background-color: #333;
+            color: var(--text-color-dark);
         }
         .chat-input {
             display: flex;
             padding: 20px;
-            border-top: 1px solid #ccc;
+            border-top: 1px solid var(--border-color-light);
+            transition: border-color 0.3s;
+        }
+        .dark-mode .chat-input {
+            border-color: var(--border-color-dark);
         }
         .chat-input textarea {
             flex: 1;
             padding: 10px;
-            border: 1px solid #ccc;
+            border: 1px solid var(--border-color-light);
             border-radius: 12px;
             resize: none;
             font-family: 'SF Pro Text', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             font-size: 1em;
+            transition: border-color 0.3s, background-color 0.3s, color 0.3s;
+        }
+        .dark-mode .chat-input textarea {
+            border-color: var(--border-color-dark);
+            background-color: var(--bg-color-dark);
+            color: var(--text-color-dark);
         }
         .chat-input button {
             margin-left: 10px;
             padding: 10px 20px;
-            background-color: #007bff;
+            background-color: var(--primary-color);
             color: #fff;
             border: none;
             border-radius: 12px;
             cursor: pointer;
             font-family: 'SF Pro Text', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             font-size: 1em;
+            transition: background-color 0.3s;
         }
         .chat-input button:hover {
             background-color: #0056b3;
@@ -155,7 +204,10 @@
             .sidebar {
                 width: 100%;
                 border-right: none;
-                border-bottom: 1px solid #ddd;
+                border-bottom: 1px solid var(--border-color-light);
+            }
+            .dark-mode .sidebar {
+                border-bottom-color: var(--border-color-dark);
             }
             .chat-container {
                 width: 100%;
@@ -196,6 +248,44 @@
             padding: 2px 5px;
             border-radius: 3px;
         }
+        /* Toggle Switch */
+        .toggle-switch {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+        .toggle-switch input {
+            display: none;
+        }
+        .toggle-switch .switch {
+            position: relative;
+            width: 40px;
+            height: 20px;
+            background-color: #ccc;
+            border-radius: 12px;
+            transition: background-color 0.3s;
+        }
+        .toggle-switch .switch::before {
+            content: '';
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            background-color: #fff;
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: transform 0.3s;
+        }
+        .toggle-switch input:checked + .switch {
+            background-color: var(--primary-color);
+        }
+        .toggle-switch input:checked + .switch::before {
+            transform: translateX(20px);
+        }
+        .toggle-switch .icon {
+            font-size: 1.5em;
+            margin-left: 10px;
+        }
     </style>
 </head>
 <body>
@@ -213,7 +303,12 @@
     </div>
     <div class="chat-container">
         <div class="chat-header">
-            CodeMotor: Python Learning Assistant
+            <span>CodeMotor: Python Learning Assistant</span>
+            <div class="toggle-switch" onclick="toggleMode()">
+                <input type="checkbox" id="mode-switch">
+                <span class="switch"></span>
+                <span class="icon" id="mode-icon">🌞</span>
+            </div>
         </div>
         <div class="chat-messages" id="chat-messages">
             {% if chat_id %}
@@ -296,6 +391,13 @@
             if (!window.location.href.includes('chat')) {
                 startNewConversation();
             }
+            // Set the initial mode
+            const mode = localStorage.getItem('mode') || 'light';
+            if (mode === 'dark') {
+                document.body.classList.add('dark-mode');
+                document.getElementById('mode-switch').checked = true;
+                document.getElementById('mode-icon').innerText = '🌜';
+            }
         };
 
         async function confirmDelete(chat_id) {
@@ -305,6 +407,12 @@
                 });
                 window.location.href = '/';
             }
+        }
+
+        function toggleMode() {
+            const isDarkMode = document.body.classList.toggle('dark-mode');
+            localStorage.setItem('mode', isDarkMode ? 'dark' : 'light');
+            document.getElementById('mode-icon').innerText = isDarkMode ? '🌜' : '🌞';
         }
     </script>
 </body>
