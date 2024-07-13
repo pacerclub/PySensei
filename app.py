@@ -1,13 +1,14 @@
 import openai
 import os
 from dotenv import load_dotenv
-from flask import Flask, request, jsonify, render_template, session
+from flask import Flask, request, jsonify, render_template, session, redirect, url_for
 from flask_session import Session
 import markdown
 from bs4 import BeautifulSoup
 from pygments import highlight
 from pygments.lexers import get_lexer_by_name
 from pygments.formatters import HtmlFormatter
+import uuid
 
 # Load environment variables from .env file
 load_dotenv()
@@ -51,18 +52,32 @@ def convert_md_to_html(md_text, light_mode=True):
 
 @app.route('/')
 def home():
-    if 'conversation' not in session:
-        session['conversation'] = []
-    return render_template('index.html', messages=session['conversation'])
+    if 'conversations' not in session:
+        session['conversations'] = {}
+    return render_template('index.html', conversations=session['conversations'])
 
-@app.route('/ask', methods=['POST'])
-def ask():
+@app.route('/chat/<chat_id>')
+def chat(chat_id):
+    if 'conversations' not in session or chat_id not in session['conversations']:
+        return redirect(url_for('home'))
+    return render_template('index.html', chat_id=chat_id, messages=session['conversations'][chat_id]['messages'], conversations=session['conversations'])
+
+@app.route('/new_chat', methods=['POST'])
+def new_chat():
+    chat_id = str(uuid.uuid4())
+    session['conversations'][chat_id] = {'messages': [], 'title': ''}
+    return jsonify({'chat_id': chat_id})
+
+@app.route('/ask/<chat_id>', methods=['POST'])
+def ask(chat_id):
+    if 'conversations' not in session or chat_id not in session['conversations']:
+        return jsonify({'error': 'Chat not found'}), 404
+
     user_input = request.json.get('question')
     if not user_input:
         return jsonify({'error': 'No question provided'}), 400
 
-    messages = session.get('conversation', [])
-
+    messages = session['conversations'][chat_id]['messages']
     messages.append({"role": "user", "content": user_input})
 
     openai_messages = [
@@ -73,14 +88,11 @@ def ask():
     response = get_response_from_openai(openai_messages)
     messages.append({"role": "assistant", "content": response})
 
-    session['conversation'] = messages
+    if not session['conversations'][chat_id]['title']:
+        session['conversations'][chat_id]['title'] = generate_title(messages)
 
+    session['conversations'][chat_id]['messages'] = messages
     return jsonify({'response': response})
-
-@app.route('/new_conversation', methods=['POST'])
-def new_conversation():
-    session.pop('conversation', None)
-    return jsonify({'message': 'New conversation started'})
 
 def get_response_from_openai(messages):
     try:
@@ -93,6 +105,18 @@ def get_response_from_openai(messages):
         return convert_md_to_html(response.choices[0].message.content.strip())
     except Exception as e:
         return f"Error: {str(e)}"
+
+def generate_title(messages):
+    try:
+        response = client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=messages + [{"role": "user", "content": "Provide a short title for this conversation."}],
+            max_tokens=10,
+            temperature=0.5,
+        )
+        return response.choices[0].message.content.strip()
+    except Exception as e:
+        return "Untitled Conversation"
 
 if __name__ == '__main__':
     app.run(debug=True)
