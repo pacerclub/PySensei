@@ -368,11 +368,6 @@
             botMessageDiv.innerHTML = `<div class="message-content">${data.error ? data.error : data.response}</div>`;
             Prism.highlightAll();
             chatMessages.scrollTop = chatMessages.scrollHeight;
-
-            // AI asks a follow-up question
-            setTimeout(() => {
-                askFollowUpQuestion();
-            }, 5000);
         }
 
         function handleKeyPress(event) {
@@ -438,24 +433,6 @@
             setTimeout(() => {
                 button.textContent = 'Copy';
             }, 2000);
-        }
-
-        function askFollowUpQuestion() {
-            const followUpQuestions = [
-                "Here's a Python code snippet with a bug. Can you fix it?\n```python\nprint('Hello World)\n```",
-                "Here's a piece of Python code. Can you explain what it does?\n```python\ndef greet(name):\n    return f'Hello, {name}'\n```",
-                "What does this Python error mean?\n```python\nTypeError: unsupported operand type(s) for +: 'int' and 'str'\n```",
-                "Can you write a Python function that reverses a string?"
-            ];
-
-            const randomQuestion = followUpQuestions[Math.floor(Math.random() * followUpQuestions.length)];
-
-            const botMessageDiv = document.createElement('div');
-            botMessageDiv.classList.add('chat-message', 'bot');
-            botMessageDiv.innerHTML = `<div class="message-content">${randomQuestion}</div>`;
-            document.getElementById('chat-messages').appendChild(botMessageDiv);
-            Prism.highlightAll();
-            document.getElementById('chat-messages').scrollTop = document.getElementById('chat-messages').scrollHeight;
         }
     </script>
 </body>
