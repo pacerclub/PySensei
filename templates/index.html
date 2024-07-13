@@ -44,6 +44,10 @@
         .conversation-list li:hover {
             background-color: #f0f0f0;
         }
+        .conversation-list li.active {
+            background-color: #007bff;
+            color: #fff;
+        }
         .delete-button {
             background: none;
             border: none;
@@ -198,10 +202,10 @@
     <div class="sidebar">
         <h2>Conversations</h2>
         <ul class="conversation-list">
-            {% for chat_id, conversation in conversations.items() %}
-            <li>
-                <span onclick="window.location.href='/chat/{{ chat_id }}'">{{ conversation.title or 'Untitled Conversation' }}</span>
-                <button class="delete-button" onclick="confirmDelete('{{ chat_id }}')">🗑️</button>
+            {% for conv_chat_id, conversation in conversations.items() %}
+            <li class="{% if conv_chat_id == chat_id %}active{% endif %}" onclick="window.location.href='/chat/{{ conv_chat_id }}'">
+                <span>{{ conversation.title or 'Untitled Conversation' }}</span>
+                <button class="delete-button" onclick="confirmDelete('{{ conv_chat_id }}'); event.stopPropagation();">🗑️</button>
             </li>
             {% endfor %}
         </ul>
@@ -243,6 +247,10 @@
 
         async function askQuestion() {
             const question = document.getElementById('question').value;
+            if (!question.trim()) {
+                alert('Please enter a question.');
+                return;
+            }
             const chatMessages = document.getElementById('chat-messages');
             const userMessageDiv = document.createElement('div');
             userMessageDiv.classList.add('chat-message', 'user');

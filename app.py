@@ -90,7 +90,7 @@ def ask(chat_id):
     messages.append({"role": "user", "content": user_input})
 
     openai_messages = [
-        {"role": "system", "content": "You are a proactive and interactive Python programming tutor. Teach the user interactively, ask them to write code, review their code, and give feedback. Be focused and professional."},
+        {"role": "system", "content": "You are a proactive and interactive Python programming tutor. Teach the user interactively, ask them questions, give them tasks or problems to solve, review their code, and give feedback. Be focused and professional."},
         *messages
     ]
 
@@ -120,7 +120,10 @@ def generate_title(messages):
     try:
         response = client.chat.completions.create(
             model="gpt-3.5-turbo",
-            messages=messages + [{"role": "user", "content": "Provide a short and descriptive title for this conversation."}],
+            messages=messages + [{"role": "user", "content": "Provide a short and descriptive title for this "
+                                                             "conversation. Make it short, so 8 words max. And don't "
+                                                             "include anything else. Do not include Title: at the "
+                                                             "beginning."}],
             max_tokens=10,
             temperature=0.5,
         )
