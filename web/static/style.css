@@ -1,0 +1,22 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+}
+
+input[type="text"], button {
+    padding: 10px;
+    font-size: 16px;
+    margin-right: 10px;
+}
+
+.results {
+    margin-top: 20px;
+}
+
+.snippet {
+    background-color: #f0f0f0;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
