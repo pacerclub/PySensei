@@ -71,6 +71,12 @@ def new_chat():
     else:
         return redirect(url_for('chat', chat_id=chat_id))
 
+@app.route('/delete_chat/<chat_id>', methods=['POST'])
+def delete_chat(chat_id):
+    if 'conversations' in session and chat_id in session['conversations']:
+        del session['conversations'][chat_id]
+    return jsonify({'success': True})
+
 @app.route('/ask/<chat_id>', methods=['POST'])
 def ask(chat_id):
     if 'conversations' not in session or chat_id not in session['conversations']:
@@ -84,15 +90,14 @@ def ask(chat_id):
     messages.append({"role": "user", "content": user_input})
 
     openai_messages = [
-        {"role": "system", "content": "You are a proactive Python programming tutor. Teach the user interactively, ask them to write code, review their code, and give feedback."},
+        {"role": "system", "content": "You are a proactive and interactive Python programming tutor. Teach the user interactively, ask them to write code, review their code, and give feedback. Be focused and professional."},
         *messages
     ]
 
     response = get_response_from_openai(openai_messages)
     messages.append({"role": "assistant", "content": response})
 
-    if not session['conversations'][chat_id]['title']:
-        session['conversations'][chat_id]['title'] = generate_title(messages)
+    session['conversations'][chat_id]['title'] = generate_title(messages)
 
     session['conversations'][chat_id]['messages'] = messages
     # Move the most recent conversation to the top
@@ -115,7 +120,7 @@ def generate_title(messages):
     try:
         response = client.chat.completions.create(
             model="gpt-3.5-turbo",
-            messages=messages + [{"role": "user", "content": "Provide a short title for this conversation."}],
+            messages=messages + [{"role": "user", "content": "Provide a short and descriptive title for this conversation."}],
             max_tokens=10,
             temperature=0.5,
         )

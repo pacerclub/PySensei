@@ -36,10 +36,22 @@
             border-radius: 8px;
             margin-bottom: 10px;
             padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             cursor: pointer;
         }
         .conversation-list li:hover {
             background-color: #f0f0f0;
+        }
+        .delete-button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #ff0000;
+        }
+        .delete-button:hover {
+            color: #cc0000;
         }
         .new-chat-button-icon {
             display: block;
@@ -187,7 +199,10 @@
         <h2>Conversations</h2>
         <ul class="conversation-list">
             {% for chat_id, conversation in conversations.items() %}
-            <li onclick="window.location.href='/chat/{{ chat_id }}'">{{ conversation.title or 'Untitled Conversation' }}</li>
+            <li>
+                <span onclick="window.location.href='/chat/{{ chat_id }}'">{{ conversation.title or 'Untitled Conversation' }}</span>
+                <button class="delete-button" onclick="confirmDelete('{{ chat_id }}')">🗑️</button>
+            </li>
             {% endfor %}
         </ul>
         <button class="new-chat-button-icon" onclick="startNewConversation()">+</button>
@@ -274,6 +289,15 @@
                 startNewConversation();
             }
         };
+
+        async function confirmDelete(chat_id) {
+            if (confirm('Are you sure you want to delete this conversation?')) {
+                await fetch(`/delete_chat/${chat_id}`, {
+                    method: 'POST'
+                });
+                window.location.href = '/';
+            }
+        }
     </script>
 </body>
 </html>
