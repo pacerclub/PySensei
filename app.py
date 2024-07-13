@@ -54,7 +54,7 @@ def convert_md_to_html(md_text, light_mode=True):
 def home():
     if 'conversations' not in session:
         session['conversations'] = {}
-    return render_template('index.html', conversations=session['conversations'])
+    return redirect(url_for('new_chat'))
 
 @app.route('/chat/<chat_id>')
 def chat(chat_id):
@@ -62,11 +62,14 @@ def chat(chat_id):
         return redirect(url_for('home'))
     return render_template('index.html', chat_id=chat_id, messages=session['conversations'][chat_id]['messages'], conversations=session['conversations'])
 
-@app.route('/new_chat', methods=['POST'])
+@app.route('/new_chat', methods=['POST', 'GET'])
 def new_chat():
     chat_id = str(uuid.uuid4())
     session['conversations'][chat_id] = {'messages': [], 'title': ''}
-    return jsonify({'chat_id': chat_id})
+    if request.method == 'POST':
+        return jsonify({'chat_id': chat_id})
+    else:
+        return redirect(url_for('chat', chat_id=chat_id))
 
 @app.route('/ask/<chat_id>', methods=['POST'])
 def ask(chat_id):
@@ -81,7 +84,7 @@ def ask(chat_id):
     messages.append({"role": "user", "content": user_input})
 
     openai_messages = [
-        {"role": "system", "content": "You are a Python programming tutor. Help the user with their queries about learning Python."},
+        {"role": "system", "content": "You are a proactive Python programming tutor. Teach the user interactively, ask them to write code, review their code, and give feedback."},
         *messages
     ]
 
@@ -92,6 +95,8 @@ def ask(chat_id):
         session['conversations'][chat_id]['title'] = generate_title(messages)
 
     session['conversations'][chat_id]['messages'] = messages
+    # Move the most recent conversation to the top
+    session['conversations'] = {chat_id: session['conversations'][chat_id], **{k: v for k, v in session['conversations'].items() if k != chat_id}}
     return jsonify({'response': response})
 
 def get_response_from_openai(messages):
@@ -99,7 +104,7 @@ def get_response_from_openai(messages):
         response = client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=messages,
-            max_tokens=150,
+            max_tokens=1500,
             temperature=0.5,
         )
         return convert_md_to_html(response.choices[0].message.content.strip())

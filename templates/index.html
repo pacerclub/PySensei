@@ -41,26 +41,28 @@
         .conversation-list li:hover {
             background-color: #f0f0f0;
         }
-        .new-chat-button {
+        .new-chat-button-icon {
             display: block;
-            width: 100%;
-            padding: 15px;
+            width: 40px;
+            height: 40px;
             background-color: #007bff;
             color: #fff;
             border: none;
-            border-radius: 8px;
+            border-radius: 50%;
             cursor: pointer;
             text-align: center;
-            font-size: 1em;
-            margin-top: 10px;
+            font-size: 1.5em;
+            line-height: 40px;
+            margin: 0 auto;
         }
-        .new-chat-button:hover {
+        .new-chat-button-icon:hover {
             background-color: #0056b3;
         }
         .chat-container {
             flex: 1;
             display: flex;
             flex-direction: column;
+            width: 100%;
         }
         .chat-header {
             background-color: #007bff;
@@ -133,6 +135,51 @@
         .chat-input button:hover {
             background-color: #0056b3;
         }
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                border-right: none;
+                border-bottom: 1px solid #ddd;
+            }
+            .chat-container {
+                width: 100%;
+            }
+        }
+        /* CSS for Markdown rendering */
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f4f4f4;
+            padding: 5px 10px;
+            border-top-left-radius: 5px;
+            border-top-right-radius: 5px;
+        }
+        .language-label {
+            font-weight: bold;
+            font-size: 0.9em;
+            color: #333;
+        }
+        .copy-button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+        pre {
+            background: #f4f4f4;
+            padding: 10px;
+            border-radius: 5px;
+            overflow: auto;
+            position: relative;
+            color: #333;
+            margin: 0;
+        }
+        code {
+            background: #f4f4f4;
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
     </style>
 </head>
 <body>
@@ -143,7 +190,7 @@
             <li onclick="window.location.href='/chat/{{ chat_id }}'">{{ conversation.title or 'Untitled Conversation' }}</li>
             {% endfor %}
         </ul>
-        <button class="new-chat-button" onclick="startNewConversation()">Start New Conversation</button>
+        <button class="new-chat-button-icon" onclick="startNewConversation()">+</button>
     </div>
     <div class="chat-container">
         <div class="chat-header">
@@ -215,6 +262,18 @@
                 askQuestion();
             }
         }
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'n' && event.ctrlKey) {
+                startNewConversation();
+            }
+        });
+
+        window.onload = function() {
+            if (!window.location.href.includes('chat')) {
+                startNewConversation();
+            }
+        };
     </script>
 </body>
 </html>
