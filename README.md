@@ -7,9 +7,9 @@ PySensei is an intelligent and interactive Python learning assistant. It helps u
 - **Interactive Conversations**: Engage in conversations to learn Python concepts.
 - **Code Snippets**: Get Python code snippets with explanations.
 - **Dark/Light Mode**: Toggle between dark and light modes for a comfortable viewing experience.
-- **Syntax Highlighting**: Code snippets are highlighted for better readability.
-- **Copy to Clipboard**: Easily copy code snippets to your clipboard.
-- **Responsive Design**: Optimized for both desktop and mobile devices.
+- **Syntax Highlighting**: Code snippets are highlighted for better readability. (Not accomplished yet)
+- **Copy to Clipboard**: Easily copy code snippets to your clipboard. (Not accomplished yet)
+- **Responsive Design**: Optimized for both desktop and mobile devices. (Not accomplished yet)
 
 ## Setup
 
@@ -59,6 +59,12 @@ PySensei is an intelligent and interactive Python learning assistant. It helps u
 
 4. **Copy Code Snippets:**
    - Click the "Copy" button next to any code snippet to copy it to your clipboard.
+
+5. **Delete a Conversation:**
+   - Click the trash can icon next to a conversation to delete it.
+
+6. **Toggle Code Mode:**
+   - Click the code icon in the input area to toggle code mode for better code writing experience.
 
 ## Contributing
 
