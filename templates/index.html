@@ -484,7 +484,7 @@
         }
 
         function copyToClipboard(button) {
-            const codeBlock = button.parentElement.nextElementSibling.querySelector('code');
+            const codeBlock = button.parentElement.nextElementSibling.querySelector('code') || button.parentElement.nextElementSibling;
             const textArea = document.createElement('textarea');
             textArea.value = codeBlock.textContent;
             document.body.appendChild(textArea);
