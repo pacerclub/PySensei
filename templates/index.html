@@ -184,6 +184,9 @@
             font-size: 1em;
             transition: border-color 0.3s, background-color 0.3s, color 0.3s;
         }
+        .chat-input textarea.code-mode {
+            height: 150px;
+        }
         .dark-mode .chat-input textarea {
             border-color: var(--border-color-dark);
             background-color: var(--bg-color-dark);
@@ -204,19 +207,18 @@
         .chat-input button:hover {
             background-color: #0056b3;
         }
-        .code-mode-button {
+        .code-mode-icon {
             margin-left: 10px;
-            padding: 10px 20px;
+            padding: 10px;
             background-color: var(--primary-color);
             color: #fff;
             border: none;
-            border-radius: 12px;
+            border-radius: 50%;
             cursor: pointer;
-            font-family: 'SF Pro Text', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            font-size: 1em;
+            font-size: 1.5em;
             transition: background-color 0.3s;
         }
-        .code-mode-button:hover {
+        .code-mode-icon:hover {
             background-color: #0056b3;
         }
         @media (max-width: 768px) {
@@ -319,7 +321,7 @@
         <ul class="conversation-list">
             {% for conv_chat_id, conversation in conversations.items() %}
             <li class="{% if conv_chat_id == chat_id %}active{% endif %}" onclick="window.location.href='/chat/{{ conv_chat_id }}'">
-            <span>{{ conversation.title or 'Untitled Conversation' }}</span>
+                <span>{{ conversation.title or 'Untitled Conversation' }}</span>
                 <button class="delete-button" onclick="confirmDelete('{{ conv_chat_id }}'); event.stopPropagation();">🗑️</button>
             </li>
             {% endfor %}
@@ -361,7 +363,7 @@
         <div class="chat-input">
             <textarea id="question" rows="1" placeholder="Ask a question about Python..." onkeypress="handleKeyPress(event)"></textarea>
             <button onclick="askQuestion()">Ask</button>
-            <button class="code-mode-button" onclick="toggleCodeMode()">Code Mode</button>
+            <button class="code-mode-icon" onclick="toggleCodeMode()"><i class="fas fa-code"></i></button>
         </div>
         {% endif %}
     </div>
@@ -425,9 +427,11 @@
 
         function toggleCodeMode() {
             codeMode = !codeMode;
-            const button = document.querySelector('.code-mode-button');
-            button.textContent = codeMode ? 'Text Mode' : 'Code Mode';
+            const button = document.querySelector('.code-mode-icon i');
+            button.classList.toggle('fa-code');
+            button.classList.toggle('fa-text');
             const textarea = document.getElementById('question');
+            textarea.classList.toggle('code-mode');
             textarea.placeholder = codeMode ? 'Write your code here...' : 'Ask a question about Python...';
         }
 
