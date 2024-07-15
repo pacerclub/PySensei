@@ -204,6 +204,21 @@
         .chat-input button:hover {
             background-color: #0056b3;
         }
+        .code-mode-button {
+            margin-left: 10px;
+            padding: 10px 20px;
+            background-color: var(--primary-color);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-family: 'SF Pro Text', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            font-size: 1em;
+            transition: background-color 0.3s;
+        }
+        .code-mode-button:hover {
+            background-color: #0056b3;
+        }
         @media (max-width: 768px) {
             .sidebar {
                 width: 100%;
@@ -272,6 +287,30 @@
             margin-left: 10px;
             transition: color 0.3s;
         }
+        .intro {
+            text-align: center;
+            padding: 20px;
+        }
+        .intro h1 {
+            margin-top: 0;
+        }
+        .intro p {
+            font-size: 1.2em;
+            line-height: 1.5;
+        }
+        .intro ul {
+            list-style: none;
+            padding: 0;
+        }
+        .intro ul li {
+            background-color: var(--secondary-color);
+            border-radius: 8px;
+            padding: 10px;
+            margin: 10px 0;
+        }
+        .dark-mode .intro ul li {
+            background-color: #333;
+        }
     </style>
 </head>
 <body>
@@ -280,7 +319,7 @@
         <ul class="conversation-list">
             {% for conv_chat_id, conversation in conversations.items() %}
             <li class="{% if conv_chat_id == chat_id %}active{% endif %}" onclick="window.location.href='/chat/{{ conv_chat_id }}'">
-                <span>{{ conversation.title or 'Untitled Conversation' }}</span>
+            <span>{{ conversation.title or 'Untitled Conversation' }}</span>
                 <button class="delete-button" onclick="confirmDelete('{{ conv_chat_id }}'); event.stopPropagation();">🗑️</button>
             </li>
             {% endfor %}
@@ -300,30 +339,37 @@
             <div class="chat-message {{ message.role }}">
                 <div class="message-content">
                     {{ message.content|safe }}
-                    {% if message.role == 'bot' and message.code %}
-                    <div class="code-header">
-                        <span class="language-label">{{ message.language }}</span>
-                        <button class="copy-button" onclick="copyToClipboard(this)">Copy</button>
-                    </div>
-                    <pre><code class="language-{{ message.language }}">{{ message.code|safe }}</code></pre>
-                    {% endif %}
                 </div>
             </div>
             {% endfor %}
             {% else %}
-            <p>Select a conversation or start a new one.</p>
+            <div class="intro">
+                <h1>Welcome to PySensei</h1>
+                <p>Created by Zigao Wang. Licensed under MIT.</p>
+                <p>GitHub Repo: <a href="https://github.com/pacerclub/pysensei" target="_blank">github.com/pacerclub/pysensei</a></p>
+                <p>PySensei helps you learn Python interactively. Ask questions, get tasks, and receive feedback.</p>
+                <p>Examples:</p>
+                <ul>
+                    <li>Explain how to use list comprehensions in Python.</li>
+                    <li>Can you help me debug this piece of code?</li>
+                    <li>Give me a challenge related to file handling in Python.</li>
+                </ul>
+            </div>
             {% endif %}
         </div>
         {% if chat_id %}
         <div class="chat-input">
             <textarea id="question" rows="1" placeholder="Ask a question about Python..." onkeypress="handleKeyPress(event)"></textarea>
             <button onclick="askQuestion()">Ask</button>
+            <button class="code-mode-button" onclick="toggleCodeMode()">Code Mode</button>
         </div>
         {% endif %}
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/prism.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/components/prism-python.min.js"></script>
     <script>
+        let codeMode = false;
+
         async function startNewConversation() {
             const response = await fetch('/new_chat', {
                 method: 'POST'
@@ -371,10 +417,18 @@
         }
 
         function handleKeyPress(event) {
-            if (event.key === 'Enter' && !event.shiftKey) {
+            if (event.key === 'Enter' && !event.shiftKey && !codeMode) {
                 event.preventDefault();
                 askQuestion();
             }
+        }
+
+        function toggleCodeMode() {
+            codeMode = !codeMode;
+            const button = document.querySelector('.code-mode-button');
+            button.textContent = codeMode ? 'Text Mode' : 'Code Mode';
+            const textarea = document.getElementById('question');
+            textarea.placeholder = codeMode ? 'Write your code here...' : 'Ask a question about Python...';
         }
 
         document.addEventListener('keydown', function(event) {
@@ -391,7 +445,6 @@
             const mode = localStorage.getItem('mode') || 'light';
             if (mode === 'dark') {
                 document.body.classList.add('dark-mode');
-                document.getElementById('mode-switch').checked = true;
                 document.getElementById('mode-icon').classList.replace('fa-sun', 'fa-moon');
                 document.getElementById('prism-theme').href = "https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/themes/prism-tomorrow.min.css";
             } else {
