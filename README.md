@@ -1,5 +1,12 @@
 # PySensei: Python Learning Assistant
 
+> [!IMPORTANT]
+> **Attention Needed:** We are seeking assistance with implementing the following features:
+> - Syntax Highlighting for code snippets
+> - Responsive Design for better user experience on all devices
+>
+> For more details, please check out the issue on GitHub: [Issue #1](https://github.com/pacerclub/PySensei/issues/1)
+
 PySensei is an intelligent and interactive Python learning assistant. It helps users learn Python by providing guidance, answering questions, and offering code snippets with explanations. Developed by Zigao Wang, PySensei aims to make Python learning more accessible and engaging.
 
 ## Features
