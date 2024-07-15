@@ -15,7 +15,7 @@ load_dotenv()
 
 # Get the OpenAI API key from environment variables
 api_key = os.getenv('OPENAI_API_KEY')
-openai.api_key = api_key
+client = openai.OpenAI(api_key=api_key)
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your_secret_key'
@@ -106,7 +106,7 @@ def ask(chat_id):
 
 def get_response_from_openai(messages):
     try:
-        response = openai.ChatCompletion.create(
+        response = client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=messages,
             max_tokens=1500,
@@ -118,9 +118,12 @@ def get_response_from_openai(messages):
 
 def generate_title(messages):
     try:
-        response = openai.ChatCompletion.create(
+        response = client.chat.completions.create(
             model="gpt-3.5-turbo",
-            messages=messages + [{"role": "user", "content": "Provide a short and descriptive title for this conversation. Make it short, so 8 words max. And don't include anything else. Do not include Title: at the beginning."}],
+            messages=messages + [{"role": "user", "content": "Provide a short and descriptive title for this "
+                                                             "conversation. Make it short, so 8 words max. And don't "
+                                                             "include anything else. Do not include Title: at the "
+                                                             "beginning."}],
             max_tokens=10,
             temperature=0.5,
         )
