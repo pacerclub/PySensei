@@ -54,7 +54,7 @@ def convert_md_to_html(md_text, light_mode=True):
 def home():
     if 'conversations' not in session:
         session['conversations'] = {}
-    return redirect(url_for('new_chat'))
+    return render_template('index.html', chat_id=None, messages=[], conversations=session['conversations'])
 
 @app.route('/chat/<chat_id>')
 def chat(chat_id):
