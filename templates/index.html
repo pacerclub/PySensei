@@ -7,9 +7,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/themes/prism.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/themes/prism-tomorrow.min.css" id="prism-theme">
-    <meta name="description" content="PySensei: Your interactive Python learning assistant. Ask questions, get tasks, and receive feedback.">
-    <meta name="author" content="Zigao Wang">
-    <meta name="keywords" content="Python, Learning, Assistant, Programming, Interactive">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=SF+Pro+Text:wght@400;600&display=swap');
 
@@ -35,10 +32,12 @@
             overflow: hidden;
             transition: background-color 0.3s, color 0.3s;
         }
+
         .dark-mode {
             background-color: var(--bg-color-dark);
             color: var(--text-color-dark);
         }
+
         .sidebar {
             width: 300px;
             background-color: #fff;
@@ -47,17 +46,21 @@
             overflow-y: auto;
             transition: background-color 0.3s, border-color 0.3s;
         }
+
         .dark-mode .sidebar {
             background-color: var(--bg-color-dark);
             border-color: var(--border-color-dark);
         }
+
         .sidebar h2 {
             margin-top: 0;
         }
+
         .conversation-list {
             list-style: none;
             padding: 0;
         }
+
         .conversation-list li {
             background-color: #fff;
             border: 1px solid var(--border-color-light);
@@ -70,20 +73,25 @@
             cursor: pointer;
             transition: background-color 0.3s, border-color 0.3s;
         }
+
         .dark-mode .conversation-list li {
             background-color: var(--bg-color-dark);
             border-color: var(--border-color-dark);
         }
+
         .conversation-list li:hover {
             background-color: var(--secondary-color);
         }
+
         .dark-mode .conversation-list li:hover {
             background-color: #333;
         }
+
         .conversation-list li.active {
             background-color: var(--primary-color);
             color: #fff;
         }
+
         .delete-button {
             background: none;
             border: none;
@@ -91,9 +99,11 @@
             color: #ff0000;
             aria-label: "Delete conversation";
         }
+
         .delete-button:hover {
             color: #cc0000;
         }
+
         .new-chat-button-icon {
             display: block;
             width: 40px;
@@ -110,15 +120,18 @@
             transition: background-color 0.3s;
             aria-label: "Start new conversation";
         }
+
         .new-chat-button-icon:hover {
             background-color: #0056b3;
         }
+
         .chat-container {
             flex: 1;
             display: flex;
             flex-direction: column;
             width: 100%;
         }
+
         .chat-header {
             background-color: var(--primary-color);
             color: #fff;
@@ -130,25 +143,30 @@
             justify-content: space-between;
             align-items: center;
         }
+
         .chat-messages {
             flex: 1;
             padding: 20px;
             overflow-y: auto;
         }
+
         .chat-message {
             margin-bottom: 20px;
             display: flex;
             max-width: 70%;
         }
+
         .chat-message.user {
             justify-content: flex-end;
             align-self: flex-end;
             margin-left: auto;
         }
+
         .chat-message.bot {
             justify-content: flex-start;
             align-self: flex-start;
         }
+
         .message-content {
             padding: 10px 15px;
             border-radius: 15px;
@@ -158,27 +176,33 @@
             line-height: 1.5;
             position: relative;
         }
+
         .chat-message.user .message-content {
             background-color: var(--primary-color);
             color: #fff;
         }
+
         .chat-message.bot .message-content {
             background-color: var(--secondary-color);
             color: var(--text-color-light);
         }
+
         .dark-mode .chat-message.bot .message-content {
             background-color: #333;
             color: var(--text-color-dark);
         }
+
         .chat-input {
             display: flex;
             padding: 20px;
             border-top: 1px solid var(--border-color-light);
             transition: border-color 0.3s;
         }
+
         .dark-mode .chat-input {
             border-color: var(--border-color-dark);
         }
+
         .chat-input textarea {
             flex: 1;
             padding: 10px;
@@ -189,14 +213,17 @@
             font-size: 1em;
             transition: border-color 0.3s, background-color 0.3s, color 0.3s;
         }
+
         .chat-input textarea.code-mode {
             height: 150px;
         }
+
         .dark-mode .chat-input textarea {
             border-color: var(--border-color-dark);
             background-color: var(--bg-color-dark);
             color: var(--text-color-dark);
         }
+
         .chat-input button {
             margin-left: 10px;
             padding: 10px 20px;
@@ -210,10 +237,12 @@
             transition: background-color 0.3s;
             aria-label: "Ask question";
         }
+
         .chat-input button:hover {
             background-color: #0056b3;
         }
-        .code-mode-icon {
+
+        .code-mode-icon, .text-mode-icon {
             margin-left: 10px;
             padding: 10px;
             background-color: var(--primary-color);
@@ -225,22 +254,27 @@
             transition: background-color 0.3s;
             aria-label: "Toggle code mode";
         }
-        .code-mode-icon:hover {
+
+        .code-mode-icon:hover, .text-mode-icon:hover {
             background-color: #0056b3;
         }
+
         @media (max-width: 768px) {
             .sidebar {
                 width: 100%;
                 border-right: none;
                 border-bottom: 1px solid var(--border-color-light);
             }
+
             .dark-mode .sidebar {
                 border-bottom-color: var(--border-color-dark);
             }
+
             .chat-container {
                 width: 100%;
             }
         }
+
         /* CSS for Markdown rendering */
         .code-header {
             display: flex;
@@ -251,11 +285,13 @@
             border-top-left-radius: 5px;
             border-top-right-radius: 5px;
         }
+
         .language-label {
             font-weight: bold;
             font-size: 0.9em;
             color: #333;
         }
+
         .copy-button {
             background: none;
             border: none;
@@ -265,9 +301,11 @@
             color: var(--primary-color);
             aria-label: "Copy code";
         }
+
         .copy-button:hover {
             color: #0056b3;
         }
+
         pre {
             background: #f4f4f4;
             padding: 10px;
@@ -277,47 +315,57 @@
             color: #333;
             margin: 0;
         }
+
         code {
             background: #f4f4f4;
             padding: 2px 5px;
             border-radius: 3px;
         }
+
         .dark-mode pre {
             background: #2d2d2d;
             color: #f8f8f2;
         }
+
         /* Toggle Switch */
         .toggle-switch {
             display: flex;
             align-items: center;
             cursor: pointer;
         }
+
         .toggle-switch .icon {
             font-size: 1.5em;
             margin-left: 10px;
             transition: color 0.3s;
         }
+
         .intro {
             text-align: center;
             padding: 20px;
         }
+
         .intro h1 {
             margin-top: 0;
         }
+
         .intro p {
             font-size: 1.2em;
             line-height: 1.5;
         }
+
         .intro ul {
             list-style: none;
             padding: 0;
         }
+
         .intro ul li {
             background-color: var(--secondary-color);
             border-radius: 8px;
             padding: 10px;
             margin: 10px 0;
         }
+
         .dark-mode .intro ul li {
             background-color: #333;
         }
@@ -372,6 +420,7 @@
             <textarea id="question" rows="1" placeholder="Ask a question about Python..." onkeypress="handleKeyPress(event)" aria-label="Ask a question"></textarea>
             <button onclick="askQuestion()">Ask</button>
             <button class="code-mode-icon" onclick="toggleCodeMode()"><i class="fas fa-code"></i></button>
+            <button class="text-mode-icon" onclick="toggleCodeMode()" style="display: none;"><i class="fas fa-font"></i></button>
         </div>
         {% endif %}
     </div>
@@ -379,6 +428,29 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/components/prism-python.min.js"></script>
     <script>
         let codeMode = false;
+
+        function copyToClipboard(button) {
+            const codeBlock = button.parentElement.nextElementSibling.querySelector('code') || button.parentElement.nextElementSibling;
+            const textArea = document.createElement('textarea');
+            textArea.value = codeBlock.textContent;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+
+            // Change the button icon to a checkmark
+            const originalIcon = button.innerHTML;
+            button.innerHTML = `
+                <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-check">
+                    <path fill-rule="evenodd" d="M13.78 3.22a.75.75 0 0 1 1.06 1.06l-8 8a.75.75 0 0 1-1.06 0l-4-4a.75.75 0 1 1 1.06-1.06L6 10.44l7.78-7.78z"></path>
+                </svg>
+            `;
+
+            // Revert back to the original copy icon after 2 seconds
+            setTimeout(() => {
+                button.innerHTML = originalIcon;
+            }, 2000);
+        }
 
         async function startNewConversation() {
             const response = await fetch('/new_chat', {
@@ -435,12 +507,18 @@
 
         function toggleCodeMode() {
             codeMode = !codeMode;
-            const button = document.querySelector('.code-mode-icon i');
-            button.classList.toggle('fa-code');
-            button.classList.toggle('fa-text');
+            const codeButton = document.querySelector('.code-mode-icon');
+            const textButton = document.querySelector('.text-mode-icon');
             const textarea = document.getElementById('question');
             textarea.classList.toggle('code-mode');
             textarea.placeholder = codeMode ? 'Write your code here...' : 'Ask a question about Python...';
+            if (codeMode) {
+                codeButton.style.display = 'none';
+                textButton.style.display = 'block';
+            } else {
+                codeButton.style.display = 'block';
+                textButton.style.display = 'none';
+            }
         }
 
         document.addEventListener('keydown', function(event) {
