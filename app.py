@@ -30,11 +30,7 @@ def convert_md_to_html(md_text, light_mode=True):
         parent = code.parent
         if parent.name == 'pre':
             language = code.get('class', [''])[0].replace('language-', '') or 'text'
-            lexer = get_lexer_by_name(language, stripall=True)
-            formatter = HtmlFormatter(style='default' if light_mode else 'monokai')
-            highlighted_code = highlight(code.string, lexer, formatter)
-            code.replace_with(BeautifulSoup(highlighted_code, 'lxml'))
-
+            code['class'] = f'language-{language}'
             copy_button_html = f'''
             <div class="code-header">
                 <span class="language-label">{language}</span>

@@ -19,6 +19,8 @@
             --secondary-color: #f0f0f0;
             --border-color-light: #ddd;
             --border-color-dark: #444;
+            --link-color-light: #007bff;
+            --link-color-dark: #1e90ff;
         }
 
         body {
@@ -31,6 +33,19 @@
             height: 100vh;
             overflow: hidden;
             transition: background-color 0.3s, color 0.3s;
+        }
+
+        a {
+            color: var(--link-color-light);
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .dark-mode a {
+            color: var(--link-color-dark);
         }
 
         .dark-mode {
@@ -343,10 +358,19 @@
         .intro {
             text-align: center;
             padding: 20px;
+            background-color: var(--secondary-color);
+            border-radius: 12px;
+            margin: 20px;
+        }
+
+        .dark-mode .intro {
+            background-color: #333;
         }
 
         .intro h1 {
             margin-top: 0;
+            font-size: 2em;
+            color: var(--primary-color);
         }
 
         .intro p {
@@ -364,10 +388,11 @@
             border-radius: 8px;
             padding: 10px;
             margin: 10px 0;
+            font-size: 1.1em;
         }
 
         .dark-mode .intro ul li {
-            background-color: #333;
+            background-color: #444;
         }
     </style>
 </head>
@@ -559,29 +584,6 @@
                 icon.classList.replace('fa-moon', 'fa-sun');
                 document.getElementById('prism-theme').href = "https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/themes/prism.min.css";
             }
-        }
-
-        function copyToClipboard(button) {
-            const codeBlock = button.parentElement.nextElementSibling.querySelector('code') || button.parentElement.nextElementSibling;
-            const textArea = document.createElement('textarea');
-            textArea.value = codeBlock.textContent;
-            document.body.appendChild(textArea);
-            textArea.select();
-            document.execCommand('copy');
-            document.body.removeChild(textArea);
-
-            // Change the button icon to a checkmark
-            const originalIcon = button.innerHTML;
-            button.innerHTML = `
-                <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-check">
-                    <path fill-rule="evenodd" d="M13.78 3.22a.75.75 0 0 1 1.06 1.06l-8 8a.75.75 0 0 1-1.06 0l-4-4a.75.75 0 1 1 1.06-1.06L6 10.44l7.78-7.78z"></path>
-                </svg>
-            `;
-
-            // Revert back to the original copy icon after 2 seconds
-            setTimeout(() => {
-                button.innerHTML = originalIcon;
-            }, 2000);
         }
     </script>
 </body>
