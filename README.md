@@ -8,7 +8,7 @@ PySensei is an intelligent and interactive Python learning assistant. It helps u
 - **Code Snippets**: Get Python code snippets with explanations.
 - **Dark/Light Mode**: Toggle between dark and light modes for a comfortable viewing experience.
 - **Syntax Highlighting**: Code snippets are highlighted for better readability. (Not accomplished yet)
-- **Copy to Clipboard**: Easily copy code snippets to your clipboard. (Not accomplished yet)
+- **Copy to Clipboard**: Easily copy code snippets to your clipboard.
 - **Responsive Design**: Optimized for both desktop and mobile devices. (Not accomplished yet)
 
 ## Setup
